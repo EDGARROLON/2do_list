@@ -5,7 +5,189 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>To-Do List</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Variables globales */
+:root {
+  --primary-color: #2196F3;
+  --delete-color: #dc3545;
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --hover-color: #f8f9fa;
+}
+
+body {
+  margin: 0;
+  padding: 1.5rem;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.todolist-box {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  background: var(--background-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.todolist-box h1 {
+  margin: 0 0 1.5rem;
+  color: var(--text-color);
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+#taskForm {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tasks-box {
+  flex-grow: 1;
+}
+
+#taskName {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  outline: none;
+}
+
+#taskName:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Botones */
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#btn-add {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+#btn-add:hover {
+  background-color: #1976D2;
+}
+
+#btn-back {
+  width: 100%;
+  margin-top: 2rem;
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+#btn-back:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+/* Lista de tareas */
+#ListaTareas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ListaTareas li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+#ListaTareas li:hover {
+  background-color: var(--hover-color);
+}
+
+/* Texto de lista vacía */
+#vacio {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  margin: 2rem 0;
+  font-style: italic;
+}
+
+/* Botones de tareas */
+.task-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-delete {
+  padding: 0.5rem;
+  color: var(--delete-color);
+  background: transparent;
+  border: 1px solid var(--delete-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: var(--delete-color);
+  color: white;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Checkbox personalizado */
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 1rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .todolist-box {
+    padding: 1.5rem;
+  }
+
+  #taskForm {
+    flex-direction: column;
+  }
+
+  #btn-add {
+    width: 100%;
+  }
+}
+    </style>
 </head>
 <body>
 

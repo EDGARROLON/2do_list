@@ -13,6 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     if (response.ok) {
         const data = await response.json();
         console.log("hola", data);
+        console.log(data.user)
         localStorage.setItem('userId', data.user.id)
         window.location.href = 'todolist.html';
         

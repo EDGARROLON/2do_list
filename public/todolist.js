@@ -107,10 +107,18 @@ async function deleteTaskFromDatabase(taskName) {
         method: 'DELETE'
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+        // Eliminar del localStorage
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const updatedTasks = tasks.filter(task => task.text !== taskName);
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+        console.log(`Tarea "${taskName}" eliminada exitosamente`);
+    } else {
         console.error('Error al eliminar la tarea en la base de datos');
     }
 }
+
 
 function AddEditBtn(li) {
     const btnEdit = document.createElement('button');
@@ -167,17 +175,31 @@ async function updateTaskInDatabase(oldTaskName, newTaskName, completed) {
 function AddCompleteBtn(li) {
     const btnComplete = document.createElement('button');
     btnComplete.textContent = 'Completada';
-    btnComplete.className = "btn btn-outline-success"
+    btnComplete.className = "btn btn-outline-success";
+    
     btnComplete.addEventListener('click', async () => {
         li.classList.toggle('completed');
 
         const taskName = li.childNodes[0].nodeValue;
-        await updateTaskInDatabase(taskName, taskName, li.classList.contains('completed')); // Actualiza el estado de completado
-        saveTasksToLocalStorage();
+
+        // Actualiza el estado de completado en la base de datos
+        await updateTaskInDatabase(taskName, taskName, li.classList.contains('completed'));
+
+        // Actualiza el estado de completado en el localStorage
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.forEach(task => {
+            if (task.text === taskName) {
+                task.completed = li.classList.contains('completed');
+            }
+        });
+
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     });
 
     return btnComplete;
 }
+
+
 
 function saveTasksToLocalStorage() {
     const tasks = [];
@@ -193,7 +215,7 @@ function saveTasksToLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-/*function loadTasksFromLocalStorage() {
+function loadTasksFromLocalStorage() {
     const tasks = JSON.parse(localStorage.getItem('tasks'));
 
     if (tasks && tasks.length > 0) {
@@ -211,7 +233,7 @@ function saveTasksToLocalStorage() {
     }
 }
 
-const style = document.createElement('style');
+/*const style = document.createElement('style');
 style.innerHTML = 
 `
     .completed {

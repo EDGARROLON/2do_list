@@ -1,6 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -13,12 +13,14 @@ const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    port:  process.env.DB_PORT
+
 });
 
 const app = express();
 //usar puerto dsde .env o por defecto 3000
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // Middleware
 app.use(bodyParser.json());
@@ -51,22 +53,37 @@ app.post('/api/registro', async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        db.query(sql, [username, hashedPassword], (err, result) => {
+        // si la db no existe, la crea, sino inserta
+        const query = `CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username
+        VARCHAR(255), password VARCHAR(255))`
+        
+        db.query(query, (err, results) => {
             if (err) {
-                console.error('Error al registrar usuario:', err);
-                res.status(500).send('Error al registrar usuario');
-            } else {
-                console.log('Usuario registrado con éxito:', result.insertId);
-                res.send({ id: result.insertId });
+                console.error(err);
+                return res.status(500).json({ message: 'Error al crear la tabla de usuarios'
+                    });
+                }
+                db.query('INSERT INTO users SET ?', { username, password: hashedPassword }, (err,
+                    results) => {
+                        if (err) {
+                            console.error(err);
+                            return res.status(500).json({ message: 'Error al registrar usuario'
+                            });
+                        }
+                        res.json({ message: 'Usuario registrado con éxito'
+                        });
+                    });
+                });
             }
-        });
-    } catch (error) {
-        console.error('Error al encriptar contraseña:', error);
-        res.status(500).send('Error al registrar usuario');
-    }
-});
+        catch{
+            console.error(err);
+            return res.status(500).json({ message: 'Error al registrar usuario'
+            });
+        }
+    });                 
+
+
+                
 
 // Ruta para iniciar sesión
 app.post('/api/login', (req, res) => {
@@ -120,7 +137,25 @@ app.post('/api/addtasks', (req, res) => {
         return res.status(401).send('Usuario no autenticado');
     }
 
-    
+    //crea la tabla si no existe    
+    const createTableSQL = `
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_user INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        completed BOOLEAN DEFAULT false,
+        FOREIGN KEY (id_user) REFERENCES users(id)
+    );
+`;
+
+// Primero, crear la tabla si no existe
+db.query(createTableSQL, (err) => {
+    if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error al crear la tabla de tareas' });
+    }
+});
+
     const sql = 'INSERT INTO tasks (id_user, name, completed) VALUES (?, ?, ?)';
     db.query(sql, [userId, task.name, task.completed], (err, result) => {
         if (err) {

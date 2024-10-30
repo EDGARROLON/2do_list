@@ -3,7 +3,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    const response = await fetch('/api/registro', {
+    const response = await fetch('https://edgarrolon.github.io/2do_list/api/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

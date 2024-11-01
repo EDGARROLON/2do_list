@@ -3,12 +3,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
-    const response = await fetch('/api/registro', {
+    const response = await fetch('https://2do_list.onrender.com/api/registro', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ username, password })
     });
-
+    
     if (response.ok) {
         alert('Registro exitoso. Inicia sesión ahora.');
         window.location.href = 'index.html';
